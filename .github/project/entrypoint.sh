@@ -4,52 +4,37 @@ env | sort
 jq < "$GITHUB_EVENT_PATH"
 
 ACTION=$(jq -r '.action' < "$GITHUB_EVENT_PATH")
-ISSUE_ID=$(jq -r '.issue.id' < "$GITHUB_EVENT_PATH")
-ISSUE_URL=$(jq -r '.issue.url' < "$GITHUB_EVENT_PATH")
 
-case "$ACTION" in
-  opened|reopened)
-    # [WIP] すでにどこかのカラムに追加された状態で reopen されたら、Move a project card を呼ぶ必要がある。
-    # https://developer.github.com/v3/projects/cards/#move-a-project-card
+if [ "$ACTION" != opened ]; then
+  echo "This action was ignored. (ACTION: $ACTION, ISSUE_ID: $ISSUE_ID)"
+  exit 0
+fi
 
-    # Add "To do" column
-    curl -s -X POST -u "$GITHUB_ACTOR:$GITHUB_TOKEN" \
-	 -H 'Accept: application/vnd.github.inertia-preview+json' \
-	 -d "{\"content_type\": \"Issue\", \"content_id\": $ISSUE_ID}" \
-	 "https://api.github.com/projects/columns/$INITIAL_COLUMN_ID/cards"
-    ;;
-  closed)
-    # 対象のカードを探し回る。
-    ORIG_IFS=$IFS
-    IFS=,
-    for i in $CLOSED_TARGET_COLUMN_IDS; do
-      # [WIP] Need to loop
-      CARDS=$(curl -s -X GET -u "$GITHUB_ACTOR:$GITHUB_TOKEN" \
+find_project_id() {
+  _PROJECT_NUMBER=$1
+  _PROJECTS=$(curl -s -X GET -u "$GITHUB_ACTOR:$GITHUB_TOKEN" \
 		   -H 'Accept: application/vnd.github.inertia-preview+json' \
-		   "https://api.github.com/projects/columns/$i/cards")
+		   "https://api.github.com/repos/$GITHUB_REPOSITORY/projects")
+  _PROJECT_URL="https://github.com/$GITHUB_REPOSITORY/projects/$_PROJECT_NUMBER"
+  echo "$_PROJECTS" | jq -r ".[] | select(.html_url == \"$_PROJECT_URL\").id"
+  unset _PROJECT_NUMBER _PROJECTS _PROJECT_URL
+}
 
-      # Select card_id of the target issue
-      CARD_ID=$(echo "$CARDS" | jq ".[] | select(.content_url == \"$ISSUE_URL\") | .id")
+find_column_id() {
+  _PROJECT_ID=$1
+  _INITIAL_COLUMN_NAME=$2
+  _COLUMNS=$(curl -s -X GET -u "$GITHUB_ACTOR:$GITHUB_TOKEN" \
+		  -H 'Accept: application/vnd.github.inertia-preview+json' \
+		  "https://api.github.com/projects/$_PROJECT_ID/columns")
+  echo "$_COLUMNS" | jq -r ".[] | select(.name == \"$_INITIAL_COLUMN_NAME\").id"
+  unset _PROJECT_ID _INITIAL_COLUMN_NAME _COLUMNS
+}
 
-      if [ "$CARD_ID" ]; then
-	break
-      fi
+PROJECT_ID=$(find_project_id "$PROJECT_NUMBER")
+INITIAL_COLUMN_ID=$(find_column_id "$PROJECT_ID" "$INITIAL_COLUMN_NAME")
+ISSUE_ID=$(jq -r '.issue.id' < "$GITHUB_EVENT_PATH")
 
-      echo "$ISSUE_URL is not found in COLUMN_ID $i"
-    done
-    IFS=$ORIG_IFS
-
-    if [ "$CARD_ID" ]; then
-      # Move to "Done" column
-      curl -s -X POST -u "$GITHUB_ACTOR:$GITHUB_TOKEN" \
-	   -H 'Accept: application/vnd.github.inertia-preview+json' \
-	   -d "{\"position\": \"top\", \"column_id\": $DONE_COLUMN_ID}" \
-	   "https://api.github.com/projects/columns/cards/$CARD_ID/moves"
-    else
-      echo "Finaly, $ISSUE_URL is not found in COLUMN_IDS $CLOSED_TARGET_COLUMN_IDS"
-    fi
-    ;;
-  *)
-    echo "ACTION: $ACTION, ISSUE_ID: $ISSUE_ID, ISSUE_URL: $ISSUE_URL"
-    ;;
-esac
+curl -s -X POST -u "$GITHUB_ACTOR:$GITHUB_TOKEN" \
+     -H 'Accept: application/vnd.github.inertia-preview+json' \
+     -d "{\"content_type\": \"Issue\", \"content_id\": $ISSUE_ID}" \
+     "https://api.github.com/projects/columns/$INITIAL_COLUMN_ID/cards"

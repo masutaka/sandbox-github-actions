@@ -14,9 +14,8 @@ action "Move an issue to GitHub Project" {
   secrets = ["GITHUB_TOKEN"]
 
   env = {
-    INITIAL_COLUMN_ID        = "4281951"         # "To do"
-    CLOSED_TARGET_COLUMN_IDS = "4281951,4281952" # "To do", "In progress"
-    DONE_COLUMN_ID           = "4281953"         # "Done"
+    PROJECT_NUMBER      = "2"
+    INITIAL_COLUMN_NAME = "To do"
   }
 
   args = ["hoge", "fuga"]
