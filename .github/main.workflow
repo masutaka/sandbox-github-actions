@@ -8,8 +8,8 @@ workflow "pull_requests" {
   resolves = ["Add a pull_request to project"]
 }
 
-local {
-  env {
+locals {
+  env = {
     PROJECT_NUMBER      = "2"
     INITIAL_COLUMN_NAME = "To do"
   }
