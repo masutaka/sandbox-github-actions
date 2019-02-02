@@ -8,23 +8,28 @@ workflow "pull_requests" {
   resolves = ["Add a pull_request to project"]
 }
 
-local {
-  env {
+action "Add an issue to project" {
+  uses = "./.github/project"
+
+  secrets = ["GITHUB_TOKEN"]
+
+  env = {
     PROJECT_NUMBER      = "2"
     INITIAL_COLUMN_NAME = "To do"
   }
-}
 
-action "Add an issue to project" {
-  uses    = "./.github/project"
-  secrets = ["GITHUB_TOKEN"]
-  env     = "${local.env}"
-  args    = ["issue"]
+  args = ["issue"]
 }
 
 action "Add a pull_request to project" {
-  uses    = "./.github/project"
+  uses = "./.github/project"
+
   secrets = ["GITHUB_TOKEN"]
-  env     = "${local.env}"
-  args    = ["pull_request"]
+
+  env = {
+    PROJECT_NUMBER      = "2"
+    INITIAL_COLUMN_NAME = "To do"
+  }
+
+  args = ["pull_request"]
 }
