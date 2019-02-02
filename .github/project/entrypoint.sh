@@ -4,7 +4,6 @@ env | sort
 jq < "$GITHUB_EVENT_PATH"
 
 KIND=$1
-echo "$KIND"
 ACTION=$(jq -r '.action' < "$GITHUB_EVENT_PATH")
 
 if [ "$ACTION" != opened ]; then
