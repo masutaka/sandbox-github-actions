@@ -3,10 +3,10 @@ workflow "issues" {
   resolves = ["Add an issue to project"]
 }
 
-# workflow "New workflow2" {
-#   on       = "pull_request"
-#   resolves = ["Hello World"]
-# }
+workflow "pull_requests" {
+  on       = "pull_request"
+  resolves = ["Hello World"]
+}
 
 action "Add an issue to project" {
   uses = "./.github/project"
@@ -18,5 +18,18 @@ action "Add an issue to project" {
     INITIAL_COLUMN_NAME = "To do"
   }
 
-  args = ["hoge", "fuga"]
+  args = ["issue"]
+}
+
+action "Add a pull_request to project" {
+  uses = "./.github/project"
+
+  secrets = ["GITHUB_TOKEN"]
+
+  env = {
+    PROJECT_NUMBER      = "2"
+    INITIAL_COLUMN_NAME = "To do"
+  }
+
+  args = ["pull_request"]
 }

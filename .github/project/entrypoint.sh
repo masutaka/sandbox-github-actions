@@ -3,6 +3,8 @@
 env | sort
 jq < "$GITHUB_EVENT_PATH"
 
+KIND=$1
+echo "$KIND"
 ACTION=$(jq -r '.action' < "$GITHUB_EVENT_PATH")
 
 if [ "$ACTION" != opened ]; then
@@ -32,9 +34,20 @@ find_column_id() {
 
 PROJECT_ID=$(find_project_id "$PROJECT_NUMBER")
 INITIAL_COLUMN_ID=$(find_column_id "$PROJECT_ID" "$INITIAL_COLUMN_NAME")
-ISSUE_ID=$(jq -r '.issue.id' < "$GITHUB_EVENT_PATH")
 
-curl -s -X POST -u "$GITHUB_ACTOR:$GITHUB_TOKEN" \
-     -H 'Accept: application/vnd.github.inertia-preview+json' \
-     -d "{\"content_type\": \"Issue\", \"content_id\": $ISSUE_ID}" \
-     "https://api.github.com/projects/columns/$INITIAL_COLUMN_ID/cards"
+case "$KIND" in
+  issue)
+    ISSUE_ID=$(jq -r '.issue.id' < "$GITHUB_EVENT_PATH")
+
+    curl -s -X POST -u "$GITHUB_ACTOR:$GITHUB_TOKEN" \
+	 -H 'Accept: application/vnd.github.inertia-preview+json' \
+	 -d "{\"content_type\": \"Issue\", \"content_id\": $ISSUE_ID}" \
+	 "https://api.github.com/projects/columns/$INITIAL_COLUMN_ID/cards"
+    ;;
+  pull_request)
+    ;;
+  *)
+    echo "Invarlid arg $KIND" >&2
+    exit 1
+    ;;
+esac
