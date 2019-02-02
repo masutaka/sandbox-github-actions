@@ -1,4 +1,4 @@
-#!/bin/sh -ex
+#!/bin/sh -eux
 
 env | sort
 jq < "$GITHUB_EVENT_PATH"
