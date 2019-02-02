@@ -44,6 +44,12 @@ case "$KIND" in
 	 "https://api.github.com/projects/columns/$INITIAL_COLUMN_ID/cards"
     ;;
   pull_request)
+    PULL_REQUEST_ID=$(jq -r '.pull_request.id' < "$GITHUB_EVENT_PATH")
+
+    curl -s -X POST -u "$GITHUB_ACTOR:$GITHUB_TOKEN" \
+	 -H 'Accept: application/vnd.github.inertia-preview+json' \
+	 -d "{\"content_type\": \"PullRequest\", \"content_id\": $PULL_REQUEST_ID}" \
+	 "https://api.github.com/projects/columns/$INITIAL_COLUMN_ID/cards"
     ;;
   *)
     echo "Invarlid arg $KIND" >&2
