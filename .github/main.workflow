@@ -5,7 +5,7 @@ workflow "issues" {
 
 workflow "pull_requests" {
   on       = "pull_request"
-  resolves = ["Hello World"]
+  resolves = ["Add a pull_request to project"]
 }
 
 action "Add an issue to project" {
