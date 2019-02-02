@@ -1,6 +1,6 @@
-workflow "GitHub Project for issues" {
+workflow "issues" {
   on       = "issues"
-  resolves = ["Move an issue to GitHub Project"]
+  resolves = ["Add an issue to project"]
 }
 
 # workflow "New workflow2" {
@@ -8,7 +8,7 @@ workflow "GitHub Project for issues" {
 #   resolves = ["Hello World"]
 # }
 
-action "Move an issue to GitHub Project" {
+action "Add an issue to project" {
   uses = "./.github/project"
 
   secrets = ["GITHUB_TOKEN"]
