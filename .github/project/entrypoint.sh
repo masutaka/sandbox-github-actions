@@ -1,7 +1,7 @@
 #!/bin/sh -eux
 
-env | sort
-jq < "$GITHUB_EVENT_PATH"
+# env | sort
+# jq < "$GITHUB_EVENT_PATH"
 
 KIND=$1
 ACTION=$(jq -r '.action' < "$GITHUB_EVENT_PATH")
@@ -38,6 +38,7 @@ case "$KIND" in
   issue)
     ISSUE_ID=$(jq -r '.issue.id' < "$GITHUB_EVENT_PATH")
 
+    # Add this issue to the project column
     curl -s -X POST -u "$GITHUB_ACTOR:$GITHUB_TOKEN" \
 	 -H 'Accept: application/vnd.github.inertia-preview+json' \
 	 -d "{\"content_type\": \"Issue\", \"content_id\": $ISSUE_ID}" \
@@ -46,6 +47,7 @@ case "$KIND" in
   pull_request)
     PULL_REQUEST_ID=$(jq -r '.pull_request.id' < "$GITHUB_EVENT_PATH")
 
+    # Add this pull_request to the project column
     curl -s -X POST -u "$GITHUB_ACTOR:$GITHUB_TOKEN" \
 	 -H 'Accept: application/vnd.github.inertia-preview+json' \
 	 -d "{\"content_type\": \"PullRequest\", \"content_id\": $PULL_REQUEST_ID}" \
