@@ -18,7 +18,7 @@ action "Add an issue to project" {
     INITIAL_COLUMN_NAME = "To do"
   }
 
-  args = ["hoge"]
+  args = ["issue"]
 }
 
 action "Add a pull_request to project" {
