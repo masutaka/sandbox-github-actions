@@ -9,7 +9,7 @@ workflow "pull_requests" {
 }
 
 action "Add an issue to project" {
-  uses = "./.github/project"
+  uses = "masutaka/github-actions-all-in-one-project@master"
 
   secrets = ["GITHUB_TOKEN"]
 
@@ -22,7 +22,7 @@ action "Add an issue to project" {
 }
 
 action "Add a pull_request to project" {
-  uses = "./.github/project"
+  uses = "masutaka/github-actions-all-in-one-project@master"
 
   secrets = ["GITHUB_TOKEN"]
 
