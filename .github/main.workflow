@@ -6,7 +6,7 @@ workflow "issues" {
 }
 
 action "Add an issue to project" {
-  uses = "masutaka/github-actions-all-in-one-project@master"
+  uses = "docker://masutaka/github-actions-all-in-one-project"
 
   secrets = ["GITHUB_TOKEN"]
 
@@ -26,7 +26,7 @@ workflow "pull_requests" {
 }
 
 action "Add a pull_request to project" {
-  uses = "masutaka/github-actions-all-in-one-project@master"
+  uses = "docker://masutaka/github-actions-all-in-one-project"
 
   secrets = ["GITHUB_TOKEN"]
 
