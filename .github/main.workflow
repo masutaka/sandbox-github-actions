@@ -1,11 +1,8 @@
+# For issues
+
 workflow "issues" {
   on       = "issues"
   resolves = ["Add an issue to project"]
-}
-
-workflow "pull_requests" {
-  on       = "pull_request"
-  resolves = ["Add a pull_request to project"]
 }
 
 action "Add an issue to project" {
@@ -19,6 +16,13 @@ action "Add an issue to project" {
   }
 
   args = ["issue"]
+}
+
+# For pull requests
+
+workflow "pull_requests" {
+  on       = "pull_request"
+  resolves = ["Add a pull_request to project"]
 }
 
 action "Add a pull_request to project" {
