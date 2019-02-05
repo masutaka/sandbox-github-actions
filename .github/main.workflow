@@ -6,16 +6,14 @@ workflow "issues" {
 }
 
 action "Add an issue to project" {
-  uses = "docker://masutaka/github-actions-all-in-one-project"
-
+  uses    = "docker://masutaka/github-actions-all-in-one-project"
   secrets = ["GITHUB_TOKEN"]
+  args    = ["issue"]
 
   env = {
     PROJECT_NUMBER      = "2"
     INITIAL_COLUMN_NAME = "To do"
   }
-
-  args = ["issue"]
 }
 
 # For pull requests
@@ -26,14 +24,12 @@ workflow "pull_requests" {
 }
 
 action "Add a pull_request to project" {
-  uses = "docker://masutaka/github-actions-all-in-one-project"
-
+  uses    = "docker://masutaka/github-actions-all-in-one-project"
   secrets = ["GITHUB_TOKEN"]
+  args    = ["pull_request"]
 
   env = {
     PROJECT_NUMBER      = "2"
     INITIAL_COLUMN_NAME = "To do"
   }
-
-  args = ["pull_request"]
 }
