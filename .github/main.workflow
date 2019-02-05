@@ -30,6 +30,6 @@ action "Add a pull_request to project" {
 
   env = {
     PROJECT_NUMBER      = "2"
-    INITIAL_COLUMN_NAME = "To do"
+    INITIAL_COLUMN_NAME = "In progress"
   }
 }
