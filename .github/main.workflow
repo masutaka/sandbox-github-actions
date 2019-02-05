@@ -11,7 +11,7 @@ action "Add an issue to project" {
   args    = ["issue"]
 
   env = {
-    PROJECT_NUMBER      = "2"
+    PROJECT_URL         = "https://github.com/masutaka/sandbox-github-actions/projects/2"
     INITIAL_COLUMN_NAME = "To do"
   }
 }
@@ -29,7 +29,7 @@ action "Add a pull_request to project" {
   args    = ["pull_request"]
 
   env = {
-    PROJECT_NUMBER      = "2"
+    PROJECT_URL         = "https://github.com/masutaka/sandbox-github-actions/projects/2"
     INITIAL_COLUMN_NAME = "In progress"
   }
 }
